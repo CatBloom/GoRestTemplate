@@ -1,0 +1,38 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: db_name
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      TZ: Asia/Tokyo
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone=Asia/Tokyo
+    ports: 
+      - 3306:3306
+    # tmpfs:
+    #   - /var/lib/mysql
+    volumes:
+      - ./sql/:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
+  go:
+    container_name: go_rest_template
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: local
+    ports:
+      - 8080:8080
+    working_dir: /go/src/work
+    volumes:
+      - .:/go/src/work
+      - ~/.aws:/root/.aws:ro
+    tty: true
+    environment: 
+      ENV: 'local'
+      AWS_REGION : 'ap-northeast-1'
+volumes:
+  mysql_data:
