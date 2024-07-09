@@ -5,7 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"main/controllers"
 	"main/db"
+	"main/models"
 	"net/http"
 	"os"
 
@@ -28,8 +30,9 @@ func init() {
 	database = db.NewDatabase()
 
 	// model
-
+	userModel := models.NewUserModel(database)
 	// controller
+	userController := controllers.NewUserController(userModel)
 
 	e = echo.New()
 	e.Pre(middleware.RemoveTrailingSlash())
@@ -58,6 +61,16 @@ func init() {
 			c.JSON(code, map[string]string{"error": msg})
 		}
 	}
+
+	e.GET("", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, "GoRestTemplateAPI")
+	})
+
+	api := e.Group("/api")
+	api.GET("/users", userController.List)
+	api.GET("/user/:id", userController.Get)
+	api.POST("/user", userController.Post)
+
 	echoLambda = echoadapter.New(e)
 }
 
