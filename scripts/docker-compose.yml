@@ -32,7 +32,7 @@ services:
       - ~/.aws:/root/.aws:ro
     tty: true
     environment: 
-      ENV: 'local'
-      AWS_REGION : 'ap-northeast-1'
+      ENV: local
+      AWS_REGION : ap-northeast-1
 volumes:
   mysql_data:
