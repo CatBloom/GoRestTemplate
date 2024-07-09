@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: GoRestTemplate
+
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 256
+
+Parameters:
+  ENV:
+    Type: String
+    Default: 'dev'
+
+Resources:
+  GoRestTemplateAPIGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref ENV
+      BinaryMediaTypes:
+        - 'image/jpeg'
+        - 'image/png'
+        - 'multipart/form-data'
+  GoRestTemplate:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'go_rest_template_${ENV}'
+      PackageType: Image
+      Architectures:
+        - x86_64
+      # Role: #role
+      # VpcConfig:
+        # SecurityGroupIds: 
+          - # Security Group ID
+        # SubnetIds: 
+          - # Subnet ID
+      Environment:
+        Variables:
+          ENV: !Ref ENV
+      Events:
+        ApiGwEndPointRoot:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId: !Ref GoRestTemplateAPIGateway
+        ApiGwEndPoint:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId: !Ref GoRestTemplateAPIGateway
+    Metadata:
+      DockerTag: provided.al2-v1
+      DockerContext: ./scripts
+      Dockerfile: Dockerfile
+      DockerBuildTarget: prod
