@@ -22,7 +22,7 @@ type database struct {
 func NewDatabase() Database {
 	db, err := connectDB()
 	if err != nil {
-		log.Printf("ERROR:%s", err.Error())
+		log.Printf("error:%s", err.Error())
 		panic(err)
 	}
 	return &database{db}
@@ -43,16 +43,20 @@ func connectDB() (*sql.DB, error) {
 		return db, err
 	}
 
-	for {
-		err = db.Ping()
-		if err != nil {
-			time.Sleep(10 * time.Second)
+	// lambdaは、無限ループだと危険なため、リトライは5回で制限
+	maxAttempts := 5
+	for i := 0; i < maxAttempts; i++ {
+		if err = db.Ping(); err != nil {
 			log.Print(err.Error())
-			continue
+			if i < maxAttempts-1 {
+				time.Sleep(10 * time.Second)
+				continue
+			}
+		} else {
+			return db, nil
 		}
-		break
 	}
-	return db, nil
+	return db, err
 }
 
 type DBConfig struct {
