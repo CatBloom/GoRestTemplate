@@ -3,7 +3,7 @@ package types
 import "time"
 
 type ReqUser struct {
-	Limit string
+	Limit int
 	Order string
 }
 

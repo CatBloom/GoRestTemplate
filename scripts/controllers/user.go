@@ -26,13 +26,21 @@ func NewUserController(m models.UserModel) UserController {
 
 func (uc *userController) List(c echo.Context) error {
 	req := types.ReqUser{}
-	req.Limit = c.QueryParam("limit")
+
+	if limit, _ := strconv.Atoi(c.QueryParam("limit")); limit > 0 {
+		req.Limit = limit
+	}
 	req.Order = c.QueryParam("order")
 
-	res, err := uc.m.GetUsers(req)
+	results, err := uc.m.GetUsers(req)
 	if err != nil {
 		log.Printf("error:%s", err.Error())
-		return c.JSON(http.StatusBadRequest, res)
+		return c.JSON(http.StatusBadRequest, nil)
+	}
+
+	res := types.Response{
+		Count:   len(results),
+		Results: results,
 	}
 	return c.JSON(http.StatusOK, res)
 }
@@ -46,10 +54,20 @@ func (uc *userController) Get(c echo.Context) error {
 		return err
 	}
 
-	res, err := uc.m.GetUserByID(intID)
+	result, err := uc.m.GetUserByID(intID)
 	if err != nil {
 		log.Printf("error:%s", err.Error())
-		return c.JSON(http.StatusBadRequest, res)
+		return c.JSON(http.StatusBadRequest, nil)
+	}
+
+	count := 0
+	if result.ID > 0 {
+		count = 1
+	}
+
+	res := types.Response{
+		Count:   count,
+		Results: result,
 	}
 	return c.JSON(http.StatusOK, res)
 }
@@ -62,10 +80,26 @@ func (uc *userController) Post(c echo.Context) error {
 		return err
 	}
 
-	res, err := uc.m.CreateUser(req)
+	id, err := uc.m.CreateUser(req)
 	if err != nil {
 		log.Printf("error:%s", err.Error())
-		return c.JSON(http.StatusBadRequest, res)
+		return c.JSON(http.StatusBadRequest, nil)
+	}
+
+	result, err := uc.m.GetUserByID(id)
+	if err != nil {
+		log.Printf("error:%s", err.Error())
+		return c.JSON(http.StatusBadRequest, nil)
+	}
+
+	count := 0
+	if result.ID > 0 {
+		count = 1
+	}
+
+	res := types.Response{
+		Count:   count,
+		Results: result,
 	}
 	return c.JSON(http.StatusOK, res)
 }
