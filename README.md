@@ -18,7 +18,7 @@
 ### unit test
 1. `cd scripts/`
 1. `docker compose up`
-1. `docker exec -it bash`
+1. `docker exec -it go_rest_template bash`
 1. `gotest -v ./...`
 
 ## deploy
