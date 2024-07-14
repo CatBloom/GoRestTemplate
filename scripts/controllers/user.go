@@ -35,7 +35,7 @@ func (uc *userController) List(c echo.Context) error {
 	results, err := uc.m.GetUsers(req)
 	if err != nil {
 		log.Printf("error:%s", err.Error())
-		return c.JSON(http.StatusBadRequest, nil)
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	res := types.Response{
@@ -51,13 +51,13 @@ func (uc *userController) Get(c echo.Context) error {
 	intID, err := strconv.Atoi(id)
 	if err != nil {
 		log.Printf("error:%s", err.Error())
-		return err
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	result, err := uc.m.GetUserByID(intID)
 	if err != nil {
 		log.Printf("error:%s", err.Error())
-		return c.JSON(http.StatusBadRequest, nil)
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	count := 0
@@ -83,13 +83,13 @@ func (uc *userController) Post(c echo.Context) error {
 	id, err := uc.m.CreateUser(req)
 	if err != nil {
 		log.Printf("error:%s", err.Error())
-		return c.JSON(http.StatusBadRequest, nil)
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	result, err := uc.m.GetUserByID(id)
 	if err != nil {
 		log.Printf("error:%s", err.Error())
-		return c.JSON(http.StatusBadRequest, nil)
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	count := 0
