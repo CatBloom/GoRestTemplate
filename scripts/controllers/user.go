@@ -27,10 +27,15 @@ func NewUserController(m models.UserModel) UserController {
 func (uc *userController) List(c echo.Context) error {
 	req := types.ReqUser{}
 
-	if limit, _ := strconv.Atoi(c.QueryParam("limit")); limit > 0 {
-		req.Limit = limit
+	if err := c.Bind(&req); err != nil {
+		log.Printf("error:%s", err.Error())
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-	req.Order = c.QueryParam("order")
+
+	if err := c.Validate(req); err != nil {
+		log.Printf("error:%s", err.Error())
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
 
 	results, err := uc.m.GetUsers(req)
 	if err != nil {
@@ -78,6 +83,11 @@ func (uc *userController) Post(c echo.Context) error {
 	if err := c.Bind(&req); err != nil {
 		log.Printf("error:%s", err.Error())
 		return err
+	}
+
+	if err := c.Validate(req); err != nil {
+		log.Printf("error:%s", err.Error())
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	id, err := uc.m.CreateUser(req)

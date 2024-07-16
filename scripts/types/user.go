@@ -3,13 +3,13 @@ package types
 import "time"
 
 type ReqUser struct {
-	Limit int
-	Order string
+	Limit int    `query:"limit" validate:"gte=0,lt=20"`
+	Order string `query:"order"`
 }
 
 type ReqCreateUser struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Name  string `json:"name" validate:"required"`
+	Email string `json:"email" validate:"required,email"`
 }
 
 type User struct {

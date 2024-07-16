@@ -8,6 +8,7 @@ import (
 	"main/controllers"
 	"main/db"
 	"main/models"
+	"main/validator"
 	"net/http"
 	"os"
 
@@ -61,6 +62,8 @@ func init() {
 			c.JSON(code, map[string]string{"error": msg})
 		}
 	}
+
+	e.Validator = validator.NewValidator()
 
 	e.GET("", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "GoRestTemplateAPI")
