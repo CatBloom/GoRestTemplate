@@ -1,4 +1,4 @@
-# GoRestTemplate
+# go-lambda-template
 
 ## System Architecture
 
