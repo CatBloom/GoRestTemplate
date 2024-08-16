@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"main/types"
+	"main/validator"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -62,6 +63,8 @@ func (m *mockErrorUserModel) CreateUser(types.ReqCreateUser) (int, error) {
 func TestGetUsersController(t *testing.T) {
 	t.Run("Test with success response", func(t *testing.T) {
 		e := echo.New()
+		e.Validator = validator.NewValidator()
+
 		mockModel := &mockUserModel{}
 		controller := NewUserController(mockModel)
 
@@ -76,6 +79,8 @@ func TestGetUsersController(t *testing.T) {
 
 	t.Run("Test with error response", func(t *testing.T) {
 		e := echo.New()
+		e.Validator = validator.NewValidator()
+
 		mockErrorModel := &mockErrorUserModel{}
 		controller := NewUserController(mockErrorModel)
 
@@ -110,6 +115,8 @@ func TestGetUserByIDController(t *testing.T) {
 
 	t.Run("Test with error response", func(t *testing.T) {
 		e := echo.New()
+		e.Validator = validator.NewValidator()
+
 		mockErrorModel := &mockErrorUserModel{}
 		controller := NewUserController(mockErrorModel)
 
@@ -130,6 +137,8 @@ func TestGetUserByIDController(t *testing.T) {
 func TestCreateUserController(t *testing.T) {
 	t.Run("Test with success response", func(t *testing.T) {
 		e := echo.New()
+		e.Validator = validator.NewValidator()
+
 		q := map[string]interface{}{
 			"name":  "test",
 			"email": "test@example.com",
@@ -150,6 +159,8 @@ func TestCreateUserController(t *testing.T) {
 
 	t.Run("Test with error response", func(t *testing.T) {
 		e := echo.New()
+		e.Validator = validator.NewValidator()
+
 		q := map[string]interface{}{
 			"name":  "test",
 			"email": "test@example.com",
