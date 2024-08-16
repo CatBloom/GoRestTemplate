@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"log"
 	"main/controllers"
 	"main/db"
@@ -41,13 +39,7 @@ func init() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.CORS())
 	e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
-		if len(reqBody) > 0 {
-			preJson := bytes.Buffer{}
-			if err := json.Indent(&preJson, reqBody, "", "   "); err != nil {
-				log.Printf("error:%s", err.Error())
-			}
-			log.Printf("ReqBody: %s", preJson.String())
-		}
+		log.Printf("ReqBody: %s", string(reqBody))
 	}))
 
 	e.HTTPErrorHandler = func(err error, c echo.Context) {
